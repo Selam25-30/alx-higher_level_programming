@@ -1,23 +1,61 @@
 #!/usr/bin/python3
-"""Defines a base model class."""
+"""
+Module base
+
+Contain class base
+With static mthod to_json_string(list_dictionaries),
+from_json_string(json_string) and draw(list_rectangles,
+list_squares)
+with class method save_to_file(cls, list_objs),
+create(cls, **dictionary), load_from_file(cls),
+load_from_file_csv(cls) and save_to_file_csv(cls, list_objs)
+"""
+
 import json
 import csv
 import turtle
 
 
 class Base:
-    """Represent the base model.
-    Represents the "base" for all other classes in project 0x0C*.
-    Attributes:
-        __nb_objects (int): The number of instantiated Bases.
-    """
+    """class that represent Base
 
+    Attributes
+    ----------
+    __nb__objects : int
+        Number of object created
+    id : int
+        Identification number
+
+    Methods
+    --------
+    to_json_string(list_dictionaries):
+        reterive a string representin json object from an object
+    save_to_file(cls, list_objs):
+        Save json strings of all instances into file
+    from_json_string(json_string):
+        Reterive Python obj of JSON string representation
+    create(cls, **dictionary):
+        Reterive an instance with all attributes already set
+    load_from_file(cls):
+        Retrieve a list of instances:
+    save_to_file_csv(cls, list_objs):
+        Write the CSV serialization of a list of objects to a file
+    load_from_file_csv(cls):
+        Retrieve a list of classes instantiated from a CSV file
+    draw(list_rectangles, list_squares):
+        Draw Rectangles and Squares using the turtle module
+    """
     __nb_objects = 0
 
     def __init__(self, id=None):
-        """Initialize a new Base.
-        Args:
-            id (int): The identity of the new Base.
+        """initialize attribute id
+
+        Parameters
+        ----------
+        __nb__objects : int
+            Number of object created
+        id : int
+            Identification number
         """
         if id is not None:
             self.id = id
@@ -27,118 +65,151 @@ class Base:
 
     @staticmethod
     def to_json_string(list_dictionaries):
-        """Return the JSON serialization of a list of dicts.
-        Args:
-            list_dictionaries (list): A list of dictionaries.
+        """reterive a string represention json object from an object
+
+        Parameter
+        --------
+        list_dictionaries : list
+            list of object dictionary
+
+        Returns
+        ------------
+        str
+            "[]" if list_dictionaries is None or empty
+            json string represenattion
         """
-        if list_dictionaries is None or list_dictionaries == []:
+        if list_dictionaries is None or len(list_dictionaries) == 0:
             return "[]"
-        return json.dumps(list_dictionaries)
+        else:
+            return json.dumps(list_dictionaries)
 
     @classmethod
     def save_to_file(cls, list_objs):
-        """Write the JSON serialization of a list of objects to a file.
-        Args:
-            list_objs (list): A list of inherited Base instances.
-        """
+        """Save json strings of all instances into file"""
+        obj = []
+        if list_objs is not None:
+            for objs in list_objs:
+                obj.append(cls.to_dictionary(objs))
         filename = cls.__name__ + ".json"
-        with open(filename, "w") as jsonfile:
-            if list_objs is None:
-                jsonfile.write("[]")
-            else:
-                list_dicts = [o.to_dictionary() for o in list_objs]
-                jsonfile.write(Base.to_json_string(list_dicts))
+        with open(filename, 'w') as f:
+            f.write(cls.to_json_string(obj))
 
     @staticmethod
     def from_json_string(json_string):
-        """Return the deserialization of a JSON string.
-        Args:
-            json_string (str): A JSON str representation of a list of dicts.
-        Returns:
-            If json_string is None or empty - an empty list.
-            Otherwise - the Python list represented by json_string.
+        """Reterive Python obj of JSON string representation
+
+        Parameter
+        ----------
+        json_string : list
+            List of dictionary of json string representation
+
+        Return
+        --------
+        list
+            list of object dictionary reprsentation
         """
-        if json_string is None or json_string == "[]":
-            return []
+        if json_string is None or len(json_string) == 0:
+            json_string = "[]"
         return json.loads(json_string)
 
     @classmethod
     def create(cls, **dictionary):
-        """Return a class instantiated from a dictionary of attributes.
-        Args:
-            **dictionary (dict): Key/value pairs of attributes to initialize.
+        """Reterive an instance with all attributes already set
+
+        Parameters
+        -----------
+        dictionary : dict
+            A dictionary contain the attributes name and value
+
+        Return
+        -------
+        object
+            an instance with all attributes
         """
-        if dictionary and dictionary != {}:
-            if cls.__name__ == "Rectangle":
-                new = cls(1, 1)
-            else:
-                new = cls(1)
-            new.update(**dictionary)
-            return new
+        if cls.__name__ == "Rectangle":
+            dummy = cls(1, 1)
+        if cls.__name__ == "Square":
+            dummy = cls(1)
+        dummy.update(**dictionary)
+        return dummy
 
     @classmethod
     def load_from_file(cls):
-        """Return a list of classes instantiated from a file of JSON strings.
-        Reads from `<cls.__name__>.json`.
-        Returns:
-            If the file does not exist - an empty list.
-            Otherwise - a list of instantiated classes.
+        """Retrieve a list of instances:
+
+        Return
+        ------
+        list
+            list of instance
         """
-        filename = str(cls.__name__) + ".json"
+        filename = cls.__name__ + ".json"
+        list_obj = []
         try:
-            with open(filename, "r") as jsonfile:
-                list_dicts = Base.from_json_string(jsonfile.read())
-                return [cls.create(**d) for d in list_dicts]
+            with open(filename, 'r') as f:
+                datas = cls.from_json_string(f.read())
+            for i, dic in enumerate(datas):
+                list_obj.append(cls.create(**datas[i]))
         except IOError:
-            return []
+            pass
+        return list_obj
 
     @classmethod
     def save_to_file_csv(cls, list_objs):
-        """Write the CSV serialization of a list of objects to a file.
-        Args:
-            list_objs (list): A list of inherited Base instances.
+        """Write the CSV serialization of a list of objects to a file
+
+        Parameter
+        -----------
+        list_objs (list): list
+                A list of inherited Base instances.
         """
         filename = cls.__name__ + ".csv"
-        with open(filename, "w", newline="") as csvfile:
-            if list_objs is None or list_objs == []:
-                csvfile.write("[]")
-            else:
+        with open(filename, 'w', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            for o in list_objs:
                 if cls.__name__ == "Rectangle":
-                    fieldnames = ["id", "width", "height", "x", "y"]
-                else:
-                    fieldnames = ["id", "size", "x", "y"]
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                for obj in list_objs:
-                    writer.writerow(obj.to_dictionary())
+                    csv_writer.writerow([o.id, o.width, o.height, o.x, o.y])
+                if cls.__name__ == "Square":
+                    csv_writer.writerow([o.id, o.size, o.x, o.y])
 
     @classmethod
     def load_from_file_csv(cls):
         """Return a list of classes instantiated from a CSV file.
-        Reads from `<cls.__name__>.csv`.
+
         Returns:
+        --------
+        list
             If the file does not exist - an empty list.
             Otherwise - a list of instantiated classes.
         """
+        objs = []
         filename = cls.__name__ + ".csv"
-        try:
-            with open(filename, "r", newline="") as csvfile:
+        with open(filename, 'r', newline='') as f:
+            reader = csv.reader(f)
+            for row in reader:
                 if cls.__name__ == "Rectangle":
-                    fieldnames = ["id", "width", "height", "x", "y"]
-                else:
-                    fieldnames = ["id", "size", "x", "y"]
-                list_dicts = csv.DictReader(csvfile, fieldnames=fieldnames)
-                list_dicts = [dict([k, int(v)] for k, v in d.items())
-                              for d in list_dicts]
-                return [cls.create(**d) for d in list_dicts]
-        except IOError:
-            return []
+                    dic = {"id": int(row[0]),
+                           "width": int(row[1]),
+                           "height": int(row[2]),
+                           "x": int(row[3]),
+                           "y": int(row[4])}
+                if cls.__name__ == "Square":
+                    dic = {"id": int(row[0]),
+                           "size": int(row[1]),
+                           "x": int(row[2]),
+                           "y": int(row[3])}
+                o = cls.create(**dic)
+                objs.append(o)
+        return objs
 
     @staticmethod
     def draw(list_rectangles, list_squares):
-        """Draw Rectangles and Squares using the turtle module.
-        Args:
-            list_rectangles (list): A list of Rectangle objects to draw.
-            list_squares (list): A list of Square objects to draw.
+        """Draw Rectangles and Squares using the turtle module
+        Parameter
+        -----------
+        list_rectangles : list
+            A list of Rectangle objects to draw.
+        list_squares : list
+            A list of Square objects to draw.
         """
         turt = turtle.Turtle()
         turt.screen.bgcolor("#b7312c")

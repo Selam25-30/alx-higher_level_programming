@@ -387,5 +387,6 @@ class TestBase(unittest.TestCase):
             list_rectangles_output = Rectangle.load_from_file_csv("Hello")
         self.assertEqual(s, str(x.exception))
 
+
 if __name__ == '__main__':
     unittest.main()

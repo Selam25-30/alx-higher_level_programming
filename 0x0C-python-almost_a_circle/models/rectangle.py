@@ -1,168 +1,271 @@
 #!/usr/bin/python3
-"""Module rectangle.
-Create a Rectangle class, inheriting from Base.
 """
-import json
+Module rectangle
+
+Contain class base
+With static mthod to_json_string(list_dictionaries),
+from_json_string(json_string) and draw(list_rectangles,
+list_squares)
+with class method save_to_file(cls, list_objs),
+create(cls, **dictionary), load_from_file(cls),
+load_from_file_csv(cls) and save_to_file_csv(cls, list_objs)
+
+
+Contain subclass Rectangle
+with public insatnce method area, display,
+update and to_dictionary
+"""
+
 from models.base import Base
 
 
 class Rectangle(Base):
-    """Class describing a rectangle.
-    Public instance methods:
-        - area()
-        - display()
-        - to_dictionary()
-        - update()
-    Inherits from Base.
-    """
+    """class that represent Rectangle
+    that inherits from Base class
 
+    Attributes
+    ----------
+    width : int
+        The width of the rectangle
+    height : int
+        The height of the rectangle
+    x : int
+        Varable x
+    y : int
+        varable y
+    id : int
+        Identification number
+
+    Method
+    ---------
+    area(self)
+        compute the area of the rectangle
+    display(self)
+        print the rectangle shape filled with # character
+    upate(self, *args, **kwargs)
+        assigns an argument to each attribute
+    to_dictionary(self):
+        reterives the dictionary representation of a Rectangle
+    """
     def __init__(self, width, height, x=0, y=0, id=None):
-        """Initializes a Rectangle instance.
-        Args:
-            - __width: width
-            - __height: height
-            - __x: position
-            - __y: position
-            - id: id
+        """initalize private width, height, x an y attributes
+
+        Parameters
+        ----------
+        width : int
+            The width of the rectangle
+        height : int
+            The height of the rectangle
+        x : int
+            Varable x
+        y : int
+            varable y
+        id : int
+            Identification number
+
+        Raises
+        ---------
+        TypeError
+            if the width and height is not integer
+            if x and y is not integer
+        ValueError
+            if width and height is less and equal to zero
+            if x and is less than 0
         """
 
-        self.width = width
-        self.height = height
-        self.x = x
-        self.y = y
         super().__init__(id)
+        if type(width) is int:
+            self.__width = width
+        else:
+            raise TypeError("width must be an integer")
+        if width <= 0:
+            raise ValueError("width must be > 0")
+        if type(height) is int:
+            self.__height = height
+        else:
+            raise TypeError("height must be an integer")
+        if height <= 0:
+            raise ValueError("height must be > 0")
+        if type(x) is int:
+            self.__x = x
+        else:
+            raise TypeError("x must be an integer")
+        if x < 0:
+            raise ValueError("x must be >= 0")
+        if type(y) is int:
+            self.__y = y
+        else:
+            raise TypeError("y must be an integer")
+        if y < 0:
+            raise ValueError("y must be >= 0")
 
     @property
     def width(self):
-        """Retrieves the width attribute."""
-
+        """retrieve prvate width attribute"""
         return self.__width
-
-    @property
-    def height(self):
-        """Retrieves the height attribute."""
-
-        return self.__height
-
-    @property
-    def x(self):
-        """Retrieves the x attribute."""
-
-        return self.__x
-
-    @property
-    def y(self):
-        """Retrieves the y attribute."""
-
-        return self.__y
 
     @width.setter
     def width(self, value):
-        """Sets the width attribute."""
+        """set the value to private width attribute
 
-        if type(value) is not int:
+        Parameter
+        -----------
+        value : int
+            the value  of private width attribute
+
+        Raises
+        -------
+        TypeError
+            if the width is not integer
+        ValueError
+            if width is less and equal to zero
+        """
+        if type(value) is int:
+            self.__width = value
+        else:
             raise TypeError("width must be an integer")
         if value <= 0:
             raise ValueError("width must be > 0")
-        self.__width = value
+
+    @property
+    def height(self):
+        """retrieve prvate heigth attribute"""
+        return self.__height
 
     @height.setter
     def height(self, value):
-        """Sets the height attribute."""
+        """set the value to private height attribute
 
-        if type(value) is not int:
+        Parameter
+        -----------
+        value : int
+            the value  of private height attribute
+
+        Raises
+        -------
+        TypeError
+            if the height is not integer
+        ValueError
+            if height is less and equal to zero
+        """
+        if type(value) is int:
+            self.__height = value
+        else:
             raise TypeError("height must be an integer")
         if value <= 0:
             raise ValueError("height must be > 0")
-        self.__height = value
+
+    @property
+    def x(self):
+        """retrieve prvate x attribute"""
+        return self.__x
 
     @x.setter
     def x(self, value):
-        """Sets the x attribute."""
+        """set the value to private x attribute
 
-        if type(value) is not int:
+        Parameter
+        -----------
+        value : int
+            the value  of private x attribute
+
+        Raises
+        --------
+        ValueError
+            if x is less than 0
+        TypeError
+            if x is not integer
+        """
+        if type(value) is int:
+            self.__x = value
+        else:
             raise TypeError("x must be an integer")
         if value < 0:
             raise ValueError("x must be >= 0")
-        self.__x = value
+
+    @property
+    def y(self):
+        """retrieve prvate y attribute"""
+        return self.__y
 
     @y.setter
     def y(self, value):
-        """Sets the y attribute."""
+        """set the value to private y attribute
 
-        if type(value) is not int:
+        Parameter
+        -----------
+        value : int
+            the value  of private y attribute
+
+        Raises
+        --------
+        ValueError
+            if y is less than 0
+        TypeError
+            if y is not integer
+        """
+        if type(value) is int:
+            self.__y = value
+        else:
             raise TypeError("y must be an integer")
         if value < 0:
             raise ValueError("y must be >= 0")
-        self.__y = value
 
     def area(self):
-        """Calculates the area of a Rectangle instance.
-        Returns: area
-        """
+        """compute the area of the rectangle
 
-        return self.__width * self.__height
+        Returns
+        -------
+        int
+            The multiplication of rectangle width and height
+        """
+        return self.width * self.height
 
     def display(self):
-        """Prints the Rectangle instance with the # character."""
-
-        for y in range(0, self.__y):
-            print()
-        for i in range(0, self.__height):
-            for x in range(0, self.__x):
-                print(" ", end="")
-            for j in range(0, self.__width):
-                print("#", end="")
-            print()
+        """print the rectangle shape filled with # character"""
+        msg = [" " * self.x + "#" * self.width for i in range(self.height)]
+        print("\n" * self.y + "\n".join(msg))
 
     def __str__(self):
-        """Returns a string representation of a Rectangle instance."""
+        """infromal string representation of Rectangle object
 
-        s = "[Rectangle] ({}) {}/{} - {}/{}".format(
-            self.id, self.__x, self.__y, self.__width, self.__height)
-        return s
+        Returns
+        --------
+        str
+          [Rectangle] (<self.id>) <self.x>/<self.y> -
+          <self.width>/<self.height>
+        """
+        return "[{:s}] ({:d}) {:d}/{:d} - {:d}/{:d}".format(
+          self.__class__.__name__, self.id, self.x,
+          self.y, self.width, self.height)
 
     def update(self, *args, **kwargs):
-        """Updates attributes of an instance.
-        Args:
-            - id attribute
-            - width attribute
-            - height attribute
-            - x attribute
-            - y attribute
-        """
-
-        if args is not None and len(args) != 0:
-            if len(args) >= 1:
-                if type(args[0]) != int and args[0] is not None:
-                    raise TypeError("id must be an integer")
-                self.id = args[0]
-            if len(args) > 1:
-                self.width = args[1]
-            if len(args) > 2:
-                self.height = args[2]
-            if len(args) > 3:
-                self.x = args[3]
-            if len(args) > 4:
-                self.y = args[4]
+        """assigns an argument to each attribute"""
+        new_value = []
+        attr = ["id", "width", "height", "x", "y"]
+        i = 0
+        if args and len(args) != 0:
+            for arg in args:
+                new_value.append(arg)
+            while i < len(new_value):
+                setattr(self, attr[i], new_value[i])
+                i += 1
         else:
             for key, value in kwargs.items():
-                if key == "id":
-                    if type(value) != int and value is not None:
-                        raise TypeError("id must be an integer")
-                    self.id = value
-                if key == "width":
-                    self.width = value
-                if key == "height":
-                    self.height = value
-                if key == "x":
-                    self.x = value
-                if key == "y":
-                    self.y = value
+                setattr(self, key, value)
 
     def to_dictionary(self):
-        """Returns the dictionary representation of a Rectangle."""
+        """reterives the dictionary representation of a Rectangle
 
-        my_dict = {'id': self.id, 'width': self.__width,
-                   'height': self.__height, 'x': self.__x, 'y': self.__y}
-        return my_dict
+            Return
+            -------
+            dict
+                the dictionary representation of a Rectangle
+        """
+        dic = {}
+        dic["x"] = self.x
+        dic["y"] = self.y
+        dic["id"] = self.id
+        dic["height"] = self.height
+        dic["width"] = self.width
+        return dic
